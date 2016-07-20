@@ -279,7 +279,7 @@ pcl::PointCloud< PointType > Geomentry::calculateNormal(pcl::PointCloud< PointTy
   ne1.setSearchMethod (tree);
   // Use all neighbors in a sphere of radius 3cm
   ne1.setRadiusSearch (radious);
-  //ne1.setViewPoint (centerpoint1.x, centerpoint1.y, centerpoint1.z);
+  ne1.setViewPoint (centerpoint1.x, centerpoint1.y, centerpoint1.z);
   // Compute the features
   ne1.compute (normal);
   for(int i = 0; i < pointcloud.size(); ++i)
@@ -319,4 +319,29 @@ double Geomentry::computeCloudResolution(const pcl::PointCloud<PointType>::Const
 		resolution /= numberOfPoints;
 
 	return resolution;
+}
+
+pcl::PointCloud< PointType > Geomentry::computeBarycenterC(const pcl::PointCloud< PointType >::ConstPtr& cloud)
+{
+  pcl::PointCloud< PointType > barycenterC;
+  PointType tmppoint;
+  tmppoint.x = 0;
+  tmppoint.y = 0;
+  tmppoint.z = 0;
+  for(int i = 0; i < cloud->size(); ++i)
+  {    
+    tmppoint.x += cloud->at(i).x;
+    tmppoint.y += cloud->at(i).y;
+    tmppoint.z += cloud->at(i).z;
+  }
+  tmppoint.x /= cloud->size();
+  tmppoint.y /= cloud->size();
+  tmppoint.z /= cloud->size();
+  barycenterC.push_back(tmppoint);
+  return barycenterC;
+}
+
+float Geomentry::computeRadius(pcl::PointCloud< PointType > BarycenterC, pcl::PointCloud< PointType >::ConstPtr cloud)
+{
+
 }

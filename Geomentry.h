@@ -54,6 +54,10 @@ Geomentry();
   
   cv::Mat findCenter(cv::Mat points);
   
+  pcl::PointCloud<PointType> computeBarycenterC(const pcl::PointCloud<PointType>::ConstPtr& cloud);
+  
+  float computeRadius(pcl::PointCloud<PointType> BarycenterC, pcl::PointCloud<PointType>::ConstPtr cloud);
+  
 };
 
 #endif // GEOMENTRY_H
