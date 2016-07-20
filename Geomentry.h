@@ -58,6 +58,8 @@ Geomentry();
   
   float computeRadius(pcl::PointCloud<PointType> BarycenterC, pcl::PointCloud<PointType>::ConstPtr cloud);
   
+  pcl::PointCloud< PointType > generateSphere(pcl::PointCloud<PointType> BarycenterC, float radius);
+  
 };
 
 #endif // GEOMENTRY_H

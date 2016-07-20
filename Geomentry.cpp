@@ -343,5 +343,71 @@ pcl::PointCloud< PointType > Geomentry::computeBarycenterC(const pcl::PointCloud
 
 float Geomentry::computeRadius(pcl::PointCloud< PointType > BarycenterC, pcl::PointCloud< PointType >::ConstPtr cloud)
 {
+  float PointcloudRadius = 0;
+  float minidis = 0;
+  for(int i = 0; i < cloud->size(); ++ i)
+  {
+    Eigen::Vector3f veca = cloud->at(i).getArray3fMap()-BarycenterC.at(0).getArray3fMap();
+    float tmpdis = veca.norm();
+    if(tmpdis > minidis)
+    {
+      minidis = tmpdis;
+    }
+  }
+  PointcloudRadius = minidis;
+  return PointcloudRadius;
+}
 
+pcl::PointCloud< PointType > Geomentry::generateSphere(pcl::PointCloud< PointType > BarycenterC, float radius)
+{
+  pcl::PointCloud< PointType > spherepoints;
+  //rotation about z axis
+  Eigen::Vector3f rotationaxis;
+  rotationaxis[0] = 0;
+  rotationaxis[1] = 0;
+  rotationaxis[2] = 1;
+  int step = 30;
+  float theta = 3.14 / step;
+  Eigen::Vector3f BarycenterEigen = BarycenterC.at(0).getArray3fMap();
+  Eigen::Vector3f startpoint;
+  startpoint[0] = -radius;
+  startpoint[1] = 0;
+  startpoint[2] = 0;
+  for(int i = 0; i <= step; ++ i)
+  {
+    Eigen::Matrix<float, 3, 3> rotationMatrix = this->RotationAboutVector(rotationaxis, theta*i);
+    Eigen::Vector3f newpoint = rotationMatrix * startpoint;
+    PointType point;
+    point.x = newpoint[0];
+    point.y = newpoint[1];
+    point.z = newpoint[2];
+    spherepoints.push_back(point);
+  }
+  pcl::PointCloud< PointType > sphere;
+  //rotation about x axis
+  rotationaxis[0] = 1;
+  rotationaxis[1] = 0;
+  rotationaxis[2] = 0;
+  for(int i = 0; i <= 2*step; ++ i)
+  {
+    Eigen::Matrix<float, 3, 3> rotationMatrix = this->RotationAboutVector(rotationaxis, theta*i);
+    for(int j = 0; j < spherepoints.size(); ++ j)
+    {
+      Eigen::Vector3f onepoint = spherepoints.at(j).getArray3fMap();
+      Eigen::Vector3f newpoint = rotationMatrix * onepoint;
+      PointType point;
+      point.x = newpoint[0];
+      point.y = newpoint[1];
+      point.z = newpoint[2];
+      sphere.push_back(point);
+    }
+  }
+  
+  for(int i = 0; i < sphere.size(); ++ i)
+  {
+    sphere.at(i).x += BarycenterC.at(0).x;
+    sphere.at(i).y += BarycenterC.at(0).y;
+    sphere.at(i).z += BarycenterC.at(0).z;
+  }
+  return sphere;
 }
