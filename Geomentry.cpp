@@ -366,7 +366,7 @@ pcl::PointCloud< PointType > Geomentry::generateSphere(pcl::PointCloud< PointTyp
   rotationaxis[0] = 0;
   rotationaxis[1] = 0;
   rotationaxis[2] = 1;
-  int step = 30;
+  int step = 10;
   float theta = 3.14 / step;
   Eigen::Vector3f BarycenterEigen = BarycenterC.at(0).getArray3fMap();
   Eigen::Vector3f startpoint;
